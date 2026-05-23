@@ -1,0 +1,34 @@
+name: Publish Powershell Module to Gallery
+
+on: 
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    environment: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Increment Module Version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $ver = $tag.TrimStart("v")
+
+          Write-Host "Setting module version to $tag"
+
+          $content = Get-Content "./PSUtility.psd1" -Raw
+          $updatedContent = $content -replace "ModuleVersion\s*=\s*['`"].*?['`"]", "ModuleVersion            = `"$ver`""
+
+          Set-Content -Path "./PSUtility.psd1" -Value $updatedContent -NoNewLine
+
+      - name: Publish Powershell Module
+        uses: mod-posh/PublishPowerShellModule@v0.0.1.0
+        with:
+          ModuleName: "PSUtility"
+          ApiKey: ${{ secrets.API_KEY }}
