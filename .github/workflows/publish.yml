@@ -32,3 +32,4 @@ jobs:
         with:
           ModuleName: "PSUtility"
           ApiKey: ${{ secrets.API_KEY }}
+          Source: ${{ github.workspace }}
