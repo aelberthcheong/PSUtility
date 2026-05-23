@@ -1,0 +1,1 @@
+Just do `Install-Module -Name PSUtility`
