@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - "v*.*.*"
-
+  
 jobs:
   publish:
     runs-on: windows-latest
@@ -20,7 +20,7 @@ jobs:
           $tag = "${{ github.ref_name }}"
           $ver = $tag.TrimStart("v")
 
-          Write-Host "Setting module version to $tag"
+          Write-Host "Setting module version to $ver"
 
           $content = Get-Content "./PSUtility.psd1" -Raw
           $updatedContent = $content -replace "ModuleVersion\s*=\s*['`"].*?['`"]", "ModuleVersion            = `"$ver`""
@@ -32,4 +32,4 @@ jobs:
         with:
           ModuleName: "PSUtility"
           ApiKey: ${{ secrets.API_KEY }}
-          Source: ${{ github.workspace }}
+          Source: "repo"

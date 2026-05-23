@@ -1,6 +1,6 @@
 @{
     RootModule               = "PSUtility.psm1"                             # Script module or binary module file associated with this manifest.
-    ModuleVersion            = "v1.0.0"                                      # Version number of this module.
+    ModuleVersion            = "1.0.0"                                      # Version number of this module.
     CompatiblePSEditions     = @("Core")                                    # Supported PSEditions
     GUID                     = "69dea22b-e2e6-4785-afd0-252d247c95e6"       # ID used to uniquely identify this module
     Author                   = "Aelberth Cheong"                            # Author of this module
@@ -47,7 +47,7 @@
 
         PSData  = @{
 
-            Tags         = @("Utility", "Tools" "PS7")                      # Tags applied to this module. These help with module discovery in online galleries.
+            Tags         = @("Utility", "Tools", "PS7")                     # Tags applied to this module. These help with module discovery in online galleries.
             ProjectUri   = "https://github.com/aelberthcheong/PSUtility"    # A URL to the main website for this project.
             # LicenseUri   = ''                                             # A URL to the license for this module.
             # IconUri      = ''                                             # A URL to an icon representing this module.
