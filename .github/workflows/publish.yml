@@ -28,8 +28,6 @@ jobs:
           Set-Content -Path "./PSUtility.psd1" -Value $updatedContent -NoNewLine
 
       - name: Publish Powershell Module
-        uses: mod-posh/PublishPowerShellModule@v0.0.1.0
-        with:
-          ModuleName: "PSUtility"
-          ApiKey: ${{ secrets.API_KEY }}
-          Source: "repo"
+        shell: pwsh
+        run: |
+          Publish-Module -Name "./PSUtility.psd1" -NuGetApiKey "${{ secrets.API_KEY }}"
