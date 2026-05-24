@@ -33,10 +33,9 @@ function Get-LineEnding {
 function Get-FileLength {
     [CmdletBinding()]
     param ( 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string]$Path,
-        [switch]$Recurse,
-
+        
         [Parameter(Mandatory=$false)]
         [ValidateSet("KB", "MB", "GB")]
         [string]$Unit
@@ -46,39 +45,26 @@ function Get-FileLength {
         "KB" { 1KB }
         "MB" { 1MB }
         "GB" { 1GB }
-        default { $null }
+        default { 1 }
     }
 
-
     foreach ($p in Resolve-Path $Path -ErrorAction SilentlyContinue) {
-        if (Test-Path $p -PathType Container) {
-            if ($Recurse) {
-                Get-ChildItem -Path $p -Directory | ForEach-Object {
-                    Get-FileLength -Path $_.FullName -Recurse -Unit $Unit
-                }
-            } else {
-                $files       = Get-ChildItem -Path $p -File -Recurse
-                $totalLength = ($files | Measure-Object -Property Length -Sum).Sum
-                $length      = $divisor ? ($totalLength / $divisor) : $totalLength
+        $literalPath = $p.Path
+        $isContainer = Test-Path $literalPath -PathType Container
 
-                [PSCustomObject]@{
-                    Name   = [IO.Path]::GetFileName($p)
-                    Length = [math]::Round($length, 2)
-                    Unit   = $Unit ? $Unit : "Bytes"
-                    Path   = $p.Path
-                }
-            }
-            continue
+        if ($isContainer) {
+            $totalLength = (Get-ChildItem -Path $literalPath -File -Recurse | Measure-Object -Property Length -Sum).Sum
+        } else {
+            $totalLength = (Get-Item $literalPath).Length
         }
 
-        $file   = Get-Item $p
-        $length = $divisor ? ($file.Length / $divisor) : $file.Length
+        if ($null -eq $totalLength) { $totalLength = 0 }
 
         [PSCustomObject]@{
-            Name   = [IO.Path]::GetFileName($p)
-            Length = [math]::Round($length, 2)
+            Name   = Split-Path $literalPath -Leaf
+            Length = [math]::Round($totalLength / $divisor, 2)
             Unit   = $Unit ? $Unit : "Bytes"
-            Path   = $p.Path
+            Path   = $literalPath
         }
     }
 }
