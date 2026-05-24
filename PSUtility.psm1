@@ -49,23 +49,34 @@ function Get-FileLength {
         default { $null }
     }
 
+
     foreach ($p in Resolve-Path $Path -ErrorAction SilentlyContinue) {
-        if (Test-Path $p -PathType "Container") {
+        if (Test-Path $p -PathType Container) {
             if ($Recurse) {
-                Get-ChildItem -Path $p -File -Recurse:$Recurse | ForEach-Object {
-                    Get-FileLength -Path $_.FullName -Unit $Unit
+                Get-ChildItem -Path $p -Directory | ForEach-Object {
+                    Get-FileLength -Path $_.FullName -Recurse -Unit $Unit
                 }
             } else {
-                Write-Warning "'$p' is a directory. Use -Recurse to include its contents"
+                $files       = Get-ChildItem -Path $p -File -Recurse
+                $totalLength = ($files | Measure-Object -Property Length -Sum).Sum
+                $length      = $divisor ? ($totalLength / $divisor) : $totalLength
+
+                [PSCustomObject]@{
+                    Name   = [IO.Path]::GetFileName($p)
+                    Length = [math]::Round($length, 2)
+                    Unit   = $Unit ? $Unit : "Bytes"
+                    Path   = $p.Path
+                }
             }
+            continue
         }
 
         $file   = Get-Item $p
-        $length = $divisor ? $file.length / $divisor : $file.length
+        $length = $divisor ? ($file.Length / $divisor) : $file.Length
 
         [PSCustomObject]@{
             Name   = [IO.Path]::GetFileName($p)
-            Length = $Length
+            Length = [math]::Round($length, 2)
             Unit   = $Unit ? $Unit : "Bytes"
             Path   = $p.Path
         }
