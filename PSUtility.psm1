@@ -46,16 +46,18 @@ function Get-FileLength {
         "KB" { 1KB }
         "MB" { 1MB }
         "GB" { 1GB }
+        default { $null }
     }
 
     foreach ($p in Resolve-Path $Path -ErrorAction SilentlyContinue) {
         if (Test-Path $p -PathType "Container") {
             if ($Recurse) {
                 Get-ChildItem -Path $p -File -Recurse:$Recurse | ForEach-Object {
-                    Get-FileLength -Path $_.FullName
+                    Get-FileLength -Path $_.FullName -Unit $Unit
                 }
+            } else {
+                Write-Warning "'$p' is a directory. Use -Recurse to include its contents"
             }
-            continue;
         }
 
         $file   = Get-Item $p
