@@ -1,6 +1,6 @@
 @{
     RootModule               = "PSUtility.psm1"                             # Script module or binary module file associated with this manifest.
-    ModuleVersion            = "1.0.0"                                      # Version number of this module.
+    ModuleVersion            = "1.0.1"                                      # Version number of this module.
     CompatiblePSEditions     = @("Core")                                    # Supported PSEditions
     GUID                     = "69dea22b-e2e6-4785-afd0-252d247c95e6"       # ID used to uniquely identify this module
     Author                   = "Aelberth Cheong"                            # Author of this module
