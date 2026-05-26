@@ -145,6 +145,28 @@ namespace NtDll
     }
 }
 
+function Get-MSVCToolLocation {
+    [CmdletBinding()]
+    param (
+        [ValidateSet("arm", "arm64", "x64", "x86")]
+        [string]$HostArch = "x64",
+
+        [ValidateSet("arm", "arm64", "x64", "x86")]
+        [string]$TargetArch = "x64"
+    )
+
+    $VSWHERE = (Get-Command "vswhere.exe" -ErrorAction SilentlyContinue)?.Source ??     `
+               "${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+
+    if (-not (Test-Path $VSWHERE)) {
+        throw "vswhere.exe not found"
+    }
+
+    & $VSWHERE -latest `
+               -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+               -find "VC\Tools\MSVC\*\bin\Host$HostArch\$TargetArch"
+}
+
 New-Alias -Name gle -Value Get-LineEnding
 New-Alias -Name gfl -Value Get-FileLength
 
